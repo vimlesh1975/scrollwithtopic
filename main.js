@@ -4,10 +4,11 @@ scriptgsap.src = './js/gsap.min.js';
 scriptgsap.setAttribute('type', 'text/javascript');
 
 
-const data2 = { Sport: ['1 Sport1', '2 Sport2', '3 Sport3', '4 Sport4', '5 Sport5',], 
+const data2 = {
+  Sport: ['1 Sport1', '2 Sport2', '3 Sport3', '4 Sport4', '5 Sport5',],
   National: ['1 National1', '2 National2', '3 National3', '4 National4', '5 National5',],
   Regional: ['1 Regional1', '2 Regional2', '3 Regional3', '4 Regional4', '5 Regional5',],
- }
+}
 
 
 
@@ -82,6 +83,9 @@ const nickbMethod = () => {
       x: _ltr ? _screen + msgWidth : -(_screen + msgWidth),
       ease: 'none',
     });
+
+ 
+
     timeline.play();
     // timeline.eventCallback('onComplete', offScreen, [nextDiv.id]);
     timeline.eventCallback('onComplete', () => {
@@ -96,8 +100,19 @@ const nickbMethod = () => {
         currentCategoryIndex = (currentCategoryIndex + 1) % categories.length;
         messages = [...data2[categories[currentCategoryIndex]]];
         updatestring('heading', categories[currentCategoryIndex]);
+
+        gsap.set(document.getElementById('heading_g'), { x: -210 });
+        let timeline2 = gsap.timeline({ paused: true });
+    
+        timeline2.to('#heading_g', {
+          duration: 0.2,
+          x: 200,
+          ease: 'none',
+        });
+        timeline2.play();
+
         next();
-      }, [], getNextMsgTime(msgWidth + 1920));
+      }, [], getNextMsgTime(msgWidth + _screen));
     }
     else {
       timeline.call(next, [], getNextMsgTime(msgWidth));
@@ -113,7 +128,7 @@ const nickbMethod = () => {
 
   function getNextMsgTime(width) {
     if (width > 1920) {
-      return (width + (_ltr ? 150 :0)) / _speed;
+      return (width + (_ltr ? 150 : 0)) / _speed;
     }
     else {
       return (width + (_ltr ? 150 : _gap)) / _speed;
