@@ -4,11 +4,18 @@ scriptgsap.src = './js/gsap.min.js';
 scriptgsap.setAttribute('type', 'text/javascript');
 
 
-const data2={Sport:['1 Sport1','2 Sport2','3 Sport3','4 Sport4','5 Sport5',], National:['1 National1','2 National2','3 National3','4 National4','5 National5',]}
+const data2 = { Sport: ['1 Sport1', '2 Sport2', '3 Sport3', '4 Sport4', '5 Sport5',], 
+  National: ['1 National1', '2 National2', '3 National3', '4 National4', '5 National5',],
+  Regional: ['1 Regional1', '2 Regional2', '3 Regional3', '4 Regional4', '5 Regional5',],
+ }
 
 
 
-let messages = data2[Object.keys(data2)[0]];
+let categories = Object.keys(data2);
+let currentCategoryIndex = 0;
+let messages = [...data2[categories[currentCategoryIndex]]];
+
+
 // let messages = [];
 var _speed = 500;
 var _gap = 50;
@@ -23,7 +30,7 @@ const nickbMethod = () => {
   // let messages = data1;
 
   function start() {
-  updatestring('heading', Object.keys(data2)[0])
+    updatestring('heading', Object.keys(data2)[currentCategoryIndex])
     _onAir = true;
     next();
   }
@@ -39,9 +46,16 @@ const nickbMethod = () => {
 
   function next() {
     // let it run to end if not on air
+
+
     if (!_onAir) return;
 
+
+
     _counter++;
+    // console.log(messages.length)
+
+
 
     var originalGroup = document.getElementById('scroll');
     originalGroup
@@ -50,7 +64,7 @@ const nickbMethod = () => {
     const nextDiv = originalGroup.cloneNode(true);
 
     let nextMsg = messages.shift();
-    messages.push(nextMsg);
+    // messages.push(nextMsg);
     nextDiv.setAttribute('id', 'tc' + _counter);
     nextDiv
       .getElementsByTagName('text')[0]
@@ -69,8 +83,27 @@ const nickbMethod = () => {
       ease: 'none',
     });
     timeline.play();
-    timeline.eventCallback('onComplete', offScreen, [nextDiv.id]);
-    timeline.call(next, [], getNextMsgTime(msgWidth));
+    // timeline.eventCallback('onComplete', offScreen, [nextDiv.id]);
+    timeline.eventCallback('onComplete', () => {
+      offScreen(nextDiv.id);
+
+    });
+
+
+    if (messages.length === 0) {
+
+      timeline.call(() => {
+        currentCategoryIndex = (currentCategoryIndex + 1) % categories.length;
+        messages = [...data2[categories[currentCategoryIndex]]];
+        updatestring('heading', categories[currentCategoryIndex]);
+        next();
+      }, [], getNextMsgTime(msgWidth + 1920));
+    }
+    else {
+      timeline.call(next, [], getNextMsgTime(msgWidth));
+    }
+
+
   }
 
   function getDuration(width) {
@@ -79,7 +112,12 @@ const nickbMethod = () => {
   }
 
   function getNextMsgTime(width) {
-    return (width + (_ltr ? 150 : _gap)) / _speed;
+    if (width > 1920) {
+      return (width + (_ltr ? 150 :0)) / _speed;
+    }
+    else {
+      return (width + (_ltr ? 150 : _gap)) / _speed;
+    }
   }
 
   function offScreen(id) {
