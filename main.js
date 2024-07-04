@@ -90,11 +90,13 @@ const nickbMethod = () => {
     nextDiv
       .getElementsByTagName('text')[0]
       .getElementsByTagName('tspan')[0]
-      .setAttribute('x', _ltr ? -msgWidth : _screen);
+      .setAttribute('x', 0);
+      gsap.set(nextDiv, {  x: _ltr ? -(msgWidth):_screen });
+
     let timeline = gsap.timeline({ paused: true });
-    timeline.to('#' + nextDiv.id, {
+    timeline.to( nextDiv, {
       duration: getDuration(msgWidth),
-      x: _ltr ? _screen + msgWidth : -(_screen + msgWidth),
+      x: _ltr ? _screen : -(msgWidth),
       ease: 'none',
     });
 
